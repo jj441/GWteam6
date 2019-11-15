@@ -3,6 +3,7 @@
 #include <unistd.h>
 #define ENTER_KEY 10
 #define TAB_KEY 9
+#define BACKSPACE_KEY 127
 
 #ifndef __UI_FUNC_H__
 #define __UI_FUNC_H__
@@ -38,15 +39,36 @@ int get_id(char *buf, int size) {
         key = getch();                          // 한 글자 입력받음
         if (key == ENTER_KEY || key == TAB_KEY) // 엔터 또는 탭 키면 종료
             break;
+        if (key == BACKSPACE_KEY) {
+            if (cnt == 0) // 아무 문자도 없을 때는 진행
+                continue;
+            if (cnt > 0) {
+                move_cur(30, 5);
+                cnt = cnt - 1;
+                buf[cnt] = '\0';
+                printf("%s", buf);
+                printf(" \b");
+                continue;
+            } // 문자가 있을 경우 처음으로 커서를 옮기고 해당 문자를
+              // NULL문자로 만든 후 새로 출력함.
+        }
 
         buf[cnt++] = (char)key; // 버퍼에 글자 저장하고 카운트 1 증가
         printf("%c", (char)key);
 
-        if (cnt == size - 1) // 최대 크기를 넘어가면 종료
-            break;
+        if (cnt == size - 1) {
+            move_cur(9, 10);
+            printf("아이디의 최대 길이는 14자 입니다. 다시 입력해 주세요.");
+            move_cur(30, 5);
+            printf("                  ");
+            move_cur(30, 5);
+            cnt = 0;
+            continue;
+        } // 처음으로 돌아가 다시 입력받음
     }
 
     buf[cnt] = '\0'; // 문자열로 만들기 위해 널 문자 마무리
+    return *buf;
 } // 키보드에 입력받은 문자를 id에 넣음
 
 int get_pw(char *buf, int size) {
@@ -56,15 +78,37 @@ int get_pw(char *buf, int size) {
         key = getch();                          // 한 글자 입력받음
         if (key == ENTER_KEY || key == TAB_KEY) // 엔터 또는 탭 키면 종료
             break;
-
+        if (key == BACKSPACE_KEY) {
+            if (cnt == 0) // 아무 문자도 없을 때는 진행
+                continue;
+            if (cnt > 0) {
+                move_cur(30, 8);
+                cnt = cnt - 1;
+                buf[cnt] = '\0';
+                for (int j = 0; j < cnt; j++)
+                    printf("*");
+                printf(" \b");
+                continue;
+            } // 문자가 있을 경우 처음으로 커서를 옮기고 해당 문자를
+              // NULL문자로 만든 후 새로 출력함.
+        }
         buf[cnt++] = (char)key; // 버퍼에 글자 저장하고 카운트 1 증가
-        putchar('*');           // 화면에 별 표시
+        printf("*");            // 화면에 별 표시
 
-        if (cnt == size - 1) // 최대 크기를 넘어가면 종료
-            break;
+        if (cnt == size - 1) {
+            move_cur(9, 10);
+            printf("비밀번호의 최대 길이는 14자 입니다. 다시 입력해 주세요.");
+            move_cur(30, 8);
+            printf("                  ");
+            move_cur(30, 8);
+            cnt = 0;
+            continue;
+        } // 처음으로 돌아가 다시 입력받음
     }
 
     buf[cnt] = '\0'; // 문자열로 만들기 위해 널 문자 마무리
+
+    return *buf;
 } // 키보드에 입력받은 문자를 passwd에 넣음
 
 #endif
