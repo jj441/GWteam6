@@ -26,42 +26,43 @@ void CpuCondition() {
     pthread_t p_thread[2];
     int thr_id;
     int status;
-    char p1[] = "thread_1";
-    char p2[] = "thread_2";
+    char p1[] = "CPU_USAGE";
+    char p2[] = "CPUTEMP_SENSOR";
 
     cpu_ui();
-    thr_id = pthread_create(&p_thread[0], NULL, cpu_usage, (void *)p1);
+
+    thr_id = pthread_create(&p_thread[0], NULL, cpu_usage,
+                            (void *)p1); // cpu 사용량 쓰레드 생성
     if (thr_id < 0) {
         perror("thread create error : ");
         exit(0);
     }
 
-    thr_id = pthread_create(&p_thread[1], NULL, cputemp_sensor, (void *)p2);
+    thr_id = pthread_create(&p_thread[1], NULL, cputemp_sensor,
+                            (void *)p2); // cpu 온도 센서 쓰레드 생성
     if (thr_id < 0) {
         perror("thread create error : ");
         exit(0);
     }
 
     while (1) {
-        // if (kbhit() == 0) {
-        //
-        // }
-        if (kbhit() == 1) {
+        if (kbhit() == 1) { // 키 버퍼에 값이 있을 때
             int num = getch();
-            if (num == 49) // 1, cpu 상태를 눌렀을때
-            {
+            if (num == 49) { // 1, cpu 상태를 눌렀을 때
+                CpuCondition();
+                break;
             }
-            if (num == 50) { // 2. 프로세스 상태를 눌렀을때
+            if (num == 50) { // 2. 프로세스 상태를 눌렀을 때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
                 break;
             }
-            if (num == 51) { // 3. 나가기를 눌렀을때
+            if (num == 51) { // 3. 나가기를 눌렀을 때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
                 break;
             }
-            if (num == 121) { // Y를 눌렀을때
+            if (num == 121) { // Y를 눌렀을 때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
                 cputemp_install();
@@ -71,11 +72,10 @@ void CpuCondition() {
         }
         sleep(1);
     }
-
     return;
 }
 
-void *cpu_usage(void *data) {
+void *cpu_usage(void *data) { // cpu 사용량
     int usage[2][10][10] = {0};
     int diffUsage[10][10];
     FILE *file;
@@ -133,10 +133,9 @@ void *cpu_usage(void *data) {
         fclose(file);
         sleep(1);
     }
+}
 
-} // cpu 사용량
-
-void cputemp_install() {
+void cputemp_install() { // cpu 온도 센서 설치
     system("clear");
     cpu_ui();
     move_cur(10, 2);
@@ -198,9 +197,9 @@ void cputemp_install() {
     system("sudo apt install lm-sensors");
     sleep(5);
     return;
-} // cpu 온도센서 설치
+}
 
-void *cputemp_sensor(void *data) {
+void *cputemp_sensor(void *data) { // cpu 온도 확인
 
     while (1) {
 
@@ -232,10 +231,9 @@ void *cputemp_sensor(void *data) {
         pclose(fp);
         sleep(1);
     }
+}
 
-} // cpu 온도센서 출력
-
-void cpu_ui() {
+void cpu_ui() { // cpu ui
     printf("┌──────────────────────────────────────────────────────────"
            "────"
            "───────"
@@ -326,4 +324,4 @@ void cpu_ui() {
            "────"
            "───────"
            "─────┘\n");
-} // cpu ui
+}
