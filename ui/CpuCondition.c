@@ -43,13 +43,14 @@ void CpuCondition() {
     }
 
     while (1) {
-        if (kbhit() == 0) {
-            continue;
-        }
+        // if (kbhit() == 0) {
+        //
+        // }
         if (kbhit() == 1) {
             int num = getch();
             if (num == 49) // 1, cpu 상태를 눌렀을때
-                continue;
+            {
+            }
             if (num == 50) { // 2. 프로세스 상태를 눌렀을때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
@@ -64,9 +65,11 @@ void CpuCondition() {
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
                 cputemp_install();
-                continue;
+                CpuCondition();
+                break;
             }
         }
+        sleep(1);
     }
 
     return;
@@ -104,17 +107,25 @@ void *cpu_usage(void *data) {
                     usage[PRESENT][num][idx] - usage[PAST][num][idx];
                 totalUsage[num] = totalUsage[num] + diffUsage[num][idx];
             }
-            move_cur(2, 12 + num);
-            printf("                                               ");
-            move_cur(2, 12 + num);
-            printf("%s %d %d %d %d %d %d %d %d %d %d\n", cpuId[num],
-                   diffUsage[num][USER], diffUsage[num][USER_NICE],
+            move_cur(2, 12 + 2 * num);
+            printf("                                                           "
+                   "              ");
+            move_cur(2, 13 + 2 * num);
+            printf("                                                           "
+                   "              ");
+            move_cur(2, 12 + 2 * num);
+            printf("%s  USER:%d  USER_NICE:%d  SYSTEM:%d  IDLE:%d  IOWAIT:%d\n"
+                   "│     IRQ:%d  SOFTIRQ:%d  STEAL:%d  GUEST:%d  "
+                   "GUEST_NICE:%d\n",
+                   cpuId[num], diffUsage[num][USER], diffUsage[num][USER_NICE],
                    diffUsage[num][SYSTEM], diffUsage[num][IDLE],
                    diffUsage[num][IOWAIT], diffUsage[num][IRQ],
                    diffUsage[num][SOFTIRQ], diffUsage[num][STEAL],
                    diffUsage[num][GUEST], diffUsage[num][GUEST_NICE]);
         }
-        move_cur(2, 15);
+        move_cur(2, 18);
+        printf("                                               ");
+        move_cur(2, 18);
         printf("Cpu usage : %f%%\n",
                100.0 * (1.0 - (diffUsage[0][IDLE] / (double)totalUsage[0])));
         fflush(stdout);
@@ -122,7 +133,7 @@ void *cpu_usage(void *data) {
         fclose(file);
         sleep(1);
     }
-    sleep(1);
+
 } // cpu 사용량
 
 void cputemp_install() {
@@ -186,7 +197,7 @@ void cputemp_install() {
     printf("\n");
     system("sudo apt install lm-sensors");
     sleep(5);
-    system("clear");
+    return;
 } // cpu 온도센서 설치
 
 void *cputemp_sensor(void *data) {
@@ -195,34 +206,33 @@ void *cputemp_sensor(void *data) {
 
         char buff[256];
         FILE *fp;
-        char sensor[30] = "sh: 1: sensors: not found";
 
         move_cur(2, 4);
         printf("cpu temperature : \n");
         fp = popen("sensors 2>&1", "r");
         int num = 5;
         while (fgets(buff, 256, fp) != NULL) {
-            if (strcmp(buff, sensor)) {
+            if (buff[0] == 's') {
                 move_cur(2, num);
                 printf("%s", buff);
                 move_cur(2, 7);
                 printf("No sensor to check temperature. Press Y to "
                        "install "
                        "sensor.");
+                break;
             } else {
                 move_cur(2, num);
                 printf("%s", buff);
-                move_cur(2, 9);
-                printf("press Y to reinstall sensor.");
-
                 num++;
             }
+            move_cur(2, 9);
+            printf("Press Y to reinstall sensor.");
         }
         fflush(stdout);
         pclose(fp);
-        sleep(2);
+        sleep(1);
     }
-    sleep(1);
+
 } // cpu 온도센서 출력
 
 void cpu_ui() {
@@ -317,25 +327,3 @@ void cpu_ui() {
            "───────"
            "─────┘\n");
 } // cpu ui
-
-/*int cpu_kbhit() {
-    while (1) {
-        if (kbhit() == 0) {
-            continue;
-        }
-        if (kbhit() == 1) {
-            int num = getch();
-            if (num == 49) // 1, cpu 상태를 눌렀을때
-                return 1;
-            if (num == 50) // 2. 프로세스 상태를 눌렀을때
-                return 2;
-            if (num == 51) // 3. 나가기를 눌렀을때
-                return 3;
-            if (num == 121) {
-                cputemp_install();
-                continue;
-            } // Y를 눌렀을때
-        }
-    }
-}
-*/
