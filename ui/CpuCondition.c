@@ -48,10 +48,6 @@ void CpuCondition() {
     while (1) {
         if (kbhit() == 1) { // 키 버퍼에 값이 있을 때
             int num = getch();
-            if (num == 49) { // 1, cpu 상태를 눌렀을 때
-                CpuCondition();
-                break;
-            }
             if (num == 50) { // 2. 프로세스 상태를 눌렀을 때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
