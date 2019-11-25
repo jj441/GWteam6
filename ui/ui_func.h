@@ -1,6 +1,8 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+
 #define ENTER_KEY 10
 #define TAB_KEY 9
 #define BACKSPACE_KEY 127
@@ -110,5 +112,30 @@ int get_pw(char *buf, int size) {
 
     return *buf;
 } // 키보드에 입력받은 문자를 passwd에 넣음
+
+int kbhit() {
+    struct termios oldt, newt;
+    int ch;
+    int oldf;
+
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+    ch = getchar();
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+    if (ch != EOF) {
+        ungetc(ch, stdin);
+        return 1;
+    }
+
+    return 0;
+}
 
 #endif

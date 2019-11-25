@@ -1,3 +1,4 @@
+#include "main_ui.c"
 #include "signin_ui.c"
 #include "signup_ui.c"
 #include "ui_func.h"
@@ -45,13 +46,14 @@ void FirstUi() {
         break;
     case 50: // 2.로그인을 눌렀을 경우
         SigninUi();
-        FirstUi();
+        mainUi();
         break;
     case 51: // 3.프로그램 종료를 눌렀을 경우
         exit(0);
     default:
         FirstUi();
     }
+    return;
 }
 
 #endif

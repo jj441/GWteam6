@@ -38,8 +38,8 @@ void SignupUi() {
     get_id(user.id, 16);
     move_cur(30, 8);
     get_pw(user.passwd, 16);
-    move_cur(0, 13);
-    printf("\n회원가입이 완료되었습니다. 3초 후 초기화면으로 돌아갑니다.");
+    move_cur(8, 10);
+    printf("회원가입이 완료되었습니다. 3초 후 초기화면으로 돌아갑니다.");
     fflush(stdout);
     sleep(3);
 }
