@@ -103,25 +103,25 @@ void *cpu_usage(void *data) { // cpu 사용량
                     usage[PRESENT][num][idx] - usage[PAST][num][idx];
                 totalUsage[num] = totalUsage[num] + diffUsage[num][idx];
             }
-            move_cur(2, 12 + 2 * num);
+            move_cur(2, 33 + 2 * num);
             printf("                                                           "
                    "              ");
-            move_cur(2, 13 + 2 * num);
+            move_cur(2, 34 + 2 * num);
             printf("                                                           "
                    "              ");
-            move_cur(2, 12 + 2 * num);
-            printf("%s  USER:%d  USER_NICE:%d  SYSTEM:%d  IDLE:%d  IOWAIT:%d\n"
-                   "│     IRQ:%d  SOFTIRQ:%d  STEAL:%d  GUEST:%d  "
+            move_cur(2, 33 + 2 * num);
+            printf("%c%c%c%c  USER:%d  USER_NICE:%d  SYSTEM:%d  IDLE:%d  IOWAIT:%d\n"
+                   "      IRQ:%d  SOFTIRQ:%d  STEAL:%d  GUEST:%d  "
                    "GUEST_NICE:%d\n",
-                   cpuId[num], diffUsage[num][USER], diffUsage[num][USER_NICE],
+                   cpuId[num][0],cpuId[num][1],cpuId[num][2],cpuId[num][3], diffUsage[num][USER], diffUsage[num][USER_NICE],
                    diffUsage[num][SYSTEM], diffUsage[num][IDLE],
                    diffUsage[num][IOWAIT], diffUsage[num][IRQ],
                    diffUsage[num][SOFTIRQ], diffUsage[num][STEAL],
                    diffUsage[num][GUEST], diffUsage[num][GUEST_NICE]);
         }
-        move_cur(2, 18);
+        move_cur(2, 32);
         printf("                                               ");
-        move_cur(2, 18);
+        move_cur(2, 32);
         printf("Cpu usage : %f%%\n",
                100.0 * (1.0 - (diffUsage[0][IDLE] / (double)totalUsage[0])));
         fflush(stdout);
