@@ -85,7 +85,7 @@ void SignupUi() {
     get_id(id, 16);
     move_cur(30, 13);
     get_pw(pw, 16);
-    client(id, pw, signup);
+    client(id, pw, signup); // id, pw를 받아 client 호출
     move_cur(9, 17);
     printf("회원가입이 완료되었습니다. 3초 후 초기화면으로 돌아갑니다.");
     fflush(stdout);

@@ -25,7 +25,7 @@ typedef enum cpuInfo {
     STEAL,
     GUEST,
     GUEST_NICE
-} cpuInfo_enum;
+} cpuInfo_enum; // CPU IDLE 정보
 
 void CpuCondition() {
     pthread_t p_thread[2];
@@ -84,7 +84,8 @@ void *cpu_usage(void *data) { // cpu 사용량
 
         file = fopen("/proc/stat", "r");
         while (1) {
-            fscanf(file, "%s %d %d %d %d %d %d %d %d %d %d", cpuId[i],
+            fscanf(file, "%s %d %d %d %d %d %d %d %d %d %d",
+                   cpuId[i], // /proc/stat 정보 저장
                    &usage[PRESENT][i][USER], &usage[PRESENT][i][USER_NICE],
                    &usage[PRESENT][i][SYSTEM], &usage[PRESENT][i][IDLE],
                    &usage[PRESENT][i][IOWAIT], &usage[PRESENT][i][IRQ],
@@ -92,7 +93,7 @@ void *cpu_usage(void *data) { // cpu 사용량
                    &usage[PRESENT][i][GUEST], &usage[PRESENT][i][GUEST_NICE]);
 
             if (cpuId[i][0] == 'i') {
-                cpuId[i][0] = '\0';
+                cpuId[i][0] = '\0'; // i가 나오면 break;
                 break;
             }
             i++;
@@ -103,7 +104,7 @@ void *cpu_usage(void *data) { // cpu 사용량
                 diffUsage[num][idx] =
                     usage[PRESENT][num][idx] - usage[PAST][num][idx];
                 totalUsage[num] = totalUsage[num] + diffUsage[num][idx];
-            }
+            } // 사용량 차이와 총 사용량 계산
 
             clearline(2, 34 + 2 * num);
             clearline(2, 33 + 2 * num);
@@ -117,13 +118,15 @@ void *cpu_usage(void *data) { // cpu 사용량
                    diffUsage[num][SYSTEM], diffUsage[num][IDLE],
                    diffUsage[num][IOWAIT], diffUsage[num][IRQ],
                    diffUsage[num][SOFTIRQ], diffUsage[num][STEAL],
-                   diffUsage[num][GUEST], diffUsage[num][GUEST_NICE]);
+                   diffUsage[num][GUEST],
+                   diffUsage[num][GUEST_NICE]); // 사용량 차이 출력
         }
 
         clearline(2, 32);
 
         printf("CPU 사용량 : %f%%\n",
-               100.0 * (1.0 - (diffUsage[0][IDLE] / (double)totalUsage[0])));
+               100.0 * (1.0 - (diffUsage[0][IDLE] /
+                               (double)totalUsage[0]))); // cpu 사용량 출력
         fflush(stdout);
         memcpy(usage[PAST], usage[PRESENT], sizeof(int) * 100);
         fclose(file);
@@ -189,7 +192,7 @@ void cputemp_install() { // cpu 온도 센서 설치
 
     system("clear");
     printf("Input root password to install sensor.\n\n");
-    system("sudo apt install lm-sensors");
+    system("sudo apt install lm-sensors"); // lm-sensors 설치
     sleep(3);
     return;
 }
@@ -203,9 +206,9 @@ void *cputemp_sensor(void *data) { // cpu 온도 확인
         move_cur(2, line);
         printf("CPU 온도 : \n");
 
-        fp = popen("sensors 2>&1", "r");
+        fp = popen("sensors 2>&1", "r"); // sensor
 
-        while (fgets(buff, 256, fp) != NULL) {
+        while (fgets(buff, 256, fp) != NULL) { // 명령어를 파이프로 받아 출력
             clearline(2, line + 1);
             printf("%s", buff);
             line++;

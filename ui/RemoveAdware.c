@@ -23,7 +23,7 @@ void RemoveAdware() {
     int adwareTF = 0;
 
     system("clear");
-    adware_ui_intro();
+    adware_ui_intro(); // intro ui 출력
     system("clear");
     adware_ui();
     move_cur(2, 5);

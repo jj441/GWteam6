@@ -113,7 +113,7 @@ int get_pw(char *buf, int size) {
     return *buf;
 } // 키보드에 입력받은 문자를 passwd에 넣음
 
-int kbhit() {
+int kbhit() { // 키 버퍼에 값이 있는 지 확인
     struct termios oldt, newt;
     int ch;
     int oldf;
@@ -138,7 +138,7 @@ int kbhit() {
     return 0;
 }
 
-void clearline(int x, int y) {
+void clearline(int x, int y) { // 해당 라인 출력 초기화
     move_cur(x, y);
     printf("                                                                   "
            "       ");

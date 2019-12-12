@@ -85,10 +85,7 @@ void SigninUi() {
     get_id(id, 16);
     move_cur(30, 13);
     get_pw(pw, 16);
-    client(id, pw, signin);
-    // if () {
-    //     SigninUi();
-    // }
+    client(id, pw, signin); // id,pw를 받아 client 호출
 }
 
 #endif
