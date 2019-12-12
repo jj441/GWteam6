@@ -1,5 +1,6 @@
 #include "CpuCondition.c"
 #include "RemoveAdware.c"
+#include "chatclient.c"
 #include "ui_func.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -101,6 +102,7 @@ void mainUi() {
             break;
         case 51: // 3번 채팅
             Ui_Wifi_Connecting();
+            chatclient();
             break;
         case 52: // 4번 종료
             exit(0);
