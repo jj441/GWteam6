@@ -1,3 +1,4 @@
+#include "client.c"
 #include "ui_func.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +7,10 @@
 #define __SIGNIN_UI_C__
 
 void SigninUi() {
-    struct User user;
+    char id[16];
+    char pw[16];
+    char signin[6] = "signin";
+
     system("clear");
     printf(
         "┌──────────────────────────────────────────────────────────────"
@@ -78,9 +82,13 @@ void SigninUi() {
         "─────┘\n");
 
     move_cur(30, 9);
-    get_id(user.id, 16);
+    get_id(id, 16);
     move_cur(30, 13);
-    get_pw(user.passwd, 16);
+    get_pw(pw, 16);
+    client(id, pw, signin);
+    // if () {
+    //     SigninUi();
+    // }
 }
 
 #endif

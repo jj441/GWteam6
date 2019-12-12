@@ -1,3 +1,4 @@
+#include "client.c"
 #include "ui_func.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +8,9 @@
 #define __SIGNUP_UI_C__
 
 void SignupUi() {
-    struct User user;
+    char id[16];
+    char pw[16];
+    char signup[6] = "signup";
     system("clear");
     printf(
         "┌──────────────────────────────────────────────────────────────"
@@ -79,9 +82,10 @@ void SignupUi() {
         "─────┘\n");
 
     move_cur(30, 9);
-    get_id(user.id, 16);
+    get_id(id, 16);
     move_cur(30, 13);
-    get_pw(user.passwd, 16);
+    get_pw(pw, 16);
+    client(id, pw, signup);
     move_cur(9, 17);
     printf("회원가입이 완료되었습니다. 3초 후 초기화면으로 돌아갑니다.");
     fflush(stdout);
