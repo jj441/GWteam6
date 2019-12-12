@@ -54,12 +54,7 @@ void CpuCondition() {
     while (1) {
         if (kbhit() == 1) { // 키 버퍼에 값이 있을 때
             int num = getch();
-            if (num == 50) { // 2. 프로세스 상태를 눌렀을 때
-                pthread_cancel(p_thread[0]);
-                pthread_cancel(p_thread[1]);
-                break;
-            }
-            if (num == 51) { // 3. 나가기를 눌렀을 때
+            if (num == 49) { // 1. 나가기를 눌렀을 때
                 pthread_cancel(p_thread[0]);
                 pthread_cancel(p_thread[1]);
                 break;
@@ -375,7 +370,7 @@ void cpu_ui() { // cpu ui
         "      "
         "          │\n"
         "│                                 "
-        "                      1 cpu 상태 2 나가기│\n"
+        "                                 1 나가기│\n"
         "└──────────────────────────────────────────────────────"
         "────────"
         "───────"
