@@ -138,4 +138,11 @@ int kbhit() {
     return 0;
 }
 
+void clearline(int x, int y) {
+    move_cur(x, y);
+    printf("                                                                   "
+           "       ");
+    move_cur(x, y);
+}
+
 #endif

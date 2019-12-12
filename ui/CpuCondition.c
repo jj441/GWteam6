@@ -1,4 +1,3 @@
-#include "CpuCondition.h"
 #include "ui_func.h"
 #include <pthread.h>
 #include <stdio.h>
@@ -8,6 +7,12 @@
 
 #define PAST 0
 #define PRESENT 1
+
+void *cpu_usage(void *data);
+void cputemp_install();
+void cpu_ui();
+void *cputemp_sensor(void *data);
+int cpu_kbhit();
 
 typedef enum cpuInfo {
     USER,
@@ -29,6 +34,7 @@ void CpuCondition() {
     char p1[] = "CPU_USAGE";
     char p2[] = "CPUTEMP_SENSOR";
 
+    system("clear");
     cpu_ui();
 
     thr_id = pthread_create(&p_thread[0], NULL, cpu_usage,
@@ -103,26 +109,25 @@ void *cpu_usage(void *data) { // cpu 사용량
                     usage[PRESENT][num][idx] - usage[PAST][num][idx];
                 totalUsage[num] = totalUsage[num] + diffUsage[num][idx];
             }
-            move_cur(2, 33 + 2 * num);
-            printf("                                                           "
-                   "              ");
-            move_cur(2, 34 + 2 * num);
-            printf("                                                           "
-                   "              ");
-            move_cur(2, 33 + 2 * num);
-            printf("%c%c%c%c  USER:%d  USER_NICE:%d  SYSTEM:%d  IDLE:%d  IOWAIT:%d\n"
-                   "      IRQ:%d  SOFTIRQ:%d  STEAL:%d  GUEST:%d  "
+
+            clearline(2, 34 + 2 * num);
+            clearline(2, 33 + 2 * num);
+
+            printf("%c%c%c%c  USER:%d  USER_NICE:%d  SYSTEM:%d  IDLE:%d  "
+                   "IOWAIT:%d\n"
+                   "|     IRQ:%d  SOFTIRQ:%d  STEAL:%d  GUEST:%d  "
                    "GUEST_NICE:%d\n",
-                   cpuId[num][0],cpuId[num][1],cpuId[num][2],cpuId[num][3], diffUsage[num][USER], diffUsage[num][USER_NICE],
+                   cpuId[num][0], cpuId[num][1], cpuId[num][2], cpuId[num][3],
+                   diffUsage[num][USER], diffUsage[num][USER_NICE],
                    diffUsage[num][SYSTEM], diffUsage[num][IDLE],
                    diffUsage[num][IOWAIT], diffUsage[num][IRQ],
                    diffUsage[num][SOFTIRQ], diffUsage[num][STEAL],
                    diffUsage[num][GUEST], diffUsage[num][GUEST_NICE]);
         }
-        move_cur(2, 32);
-        printf("                                               ");
-        move_cur(2, 32);
-        printf("Cpu usage : %f%%\n",
+
+        clearline(2, 32);
+
+        printf("CPU 사용량 : %f%%\n",
                100.0 * (1.0 - (diffUsage[0][IDLE] / (double)totalUsage[0])));
         fflush(stdout);
         memcpy(usage[PAST], usage[PRESENT], sizeof(int) * 100);
@@ -156,7 +161,7 @@ void cputemp_install() { // cpu 온도 센서 설치
     printf("@@@@@@@@---------------------------------@@@@@\n");
     sleep(1);
     move_cur(10, 9);
-    printf("@@@@@@@@@@~--------downloads-----------@@@@@@@\n");
+    printf("@@@@@@@@@@~--------다운로드 중-----------@@@@@@@\n");
     sleep(0.3);
     move_cur(10, 10);
     printf("@@@@@@@@@@@---------------------------@@@@@@@@\n");
@@ -186,43 +191,33 @@ void cputemp_install() { // cpu 온도 센서 설치
     printf("@@@@@@@@@@@@@@@@@@@@@@@--@@@@@@@@@@@@@@@@@@@@@\n");
     sleep(0.1);
     sleep(2);
+
     system("clear");
-    cpu_ui();
-    move_cur(2, 2);
-    printf("\n");
+    printf("Input root password to install sensor.\n\n");
     system("sudo apt install lm-sensors");
-    sleep(5);
+    sleep(3);
     return;
 }
 
 void *cputemp_sensor(void *data) { // cpu 온도 확인
-
     while (1) {
-
         char buff[256];
         FILE *fp;
+        int line = 4;
 
-        move_cur(2, 4);
-        printf("cpu temperature : \n");
+        move_cur(2, line);
+        printf("CPU 온도 : \n");
+
         fp = popen("sensors 2>&1", "r");
-        int num = 5;
+
         while (fgets(buff, 256, fp) != NULL) {
-            if (buff[0] == 's') {
-                move_cur(2, num);
-                printf("%s", buff);
-                move_cur(2, 7);
-                printf("No sensor to check temperature. Press Y to "
-                       "install "
-                       "sensor.");
-                break;
-            } else {
-                move_cur(2, num);
-                printf("%s", buff);
-                num++;
-            }
-            move_cur(2, 9);
-            printf("Press Y to reinstall sensor.");
+            clearline(2, line + 1);
+            printf("%s", buff);
+            line++;
         }
+        move_cur(2, line + 2);
+        printf("Press Y to install sensor.");
+
         fflush(stdout);
         pclose(fp);
         sleep(1);
@@ -230,94 +225,207 @@ void *cputemp_sensor(void *data) { // cpu 온도 확인
 }
 
 void cpu_ui() { // cpu ui
-    printf("┌──────────────────────────────────────────────────────────"
-           "────"
-           "───────"
-           "──"
-           "───┐\n"
-           "│                                 cpu condition            "
-           "    "
-           "            │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "       "
-           "     │\n"
-           "│                                                          "
-           "    "
-           "    "
-           "        │\n"
-           "│                                 "
-           "      1 cpu 상태 2 프로세스 상태 3 나가기│\n"
-           "└──────────────────────────────────────────────────────────"
-           "────"
-           "───────"
-           "─────┘\n");
+    printf(
+        "┌───────────────────────────────────────────────────────────────────"
+        "───────────┐\n"
+        "│                                   CPU 상태           "
+        "                        │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "         "
+        "       │\n"
+        "│                                                          "
+        "    "
+        "      "
+        "          │\n"
+        "│                                 "
+        "                          1 cpu 상태 2 나가기│\n"
+        "└──────────────────────────────────────────────────────────"
+        "────────"
+        "───────"
+        "─────┘\n");
 }
