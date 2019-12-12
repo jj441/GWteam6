@@ -87,14 +87,14 @@ void RemoveAdware() {
             printf("%s", str);
             int result = remove(str);
             if (result == 0) {
-                printf(" : file delete complete\n");
+                printf(" : file deleted\n");
             } else if (result == -1) {
                 printf(" : file delete fail\n");
             }
             sleep(1);
             adwarecount++;
         }
-        move_cur(2, adwarecount);
+        move_cur(2, adwarecount + 1);
         printf("All adware deleted!");
         int num = getch();
         if (num == 49)
