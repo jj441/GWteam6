@@ -94,7 +94,8 @@ void RemoveAdware() {
             sleep(1);
             adwarecount++;
         }
-
+        move_cur(2, adwarecount);
+        printf("All adware deleted!");
         int num = getch();
         if (num == 49)
             return;
@@ -111,6 +112,12 @@ void adware_ui() {
            "│                               애드웨어 삭제           "
            "         "
            "     "
+           "     │\n"
+           "│                                                              "
+           "       "
+           "     │\n"
+           "│                                                              "
+           "       "
            "     │\n"
            "│                                                              "
            "       "
