@@ -10,11 +10,6 @@
 #ifndef __UI_FUNC_H__
 #define __UI_FUNC_H__
 
-struct User {
-    char id[16];
-    char passwd[16];
-};
-
 int getch() {
     int c;
     struct termios oldattr, newattr;
