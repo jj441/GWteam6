@@ -10,11 +10,6 @@
 #ifndef __UI_FUNC_H__
 #define __UI_FUNC_H__
 
-struct User {
-    char id[16];
-    char passwd[16];
-};
-
 int getch() {
     int c;
     struct termios oldattr, newattr;
@@ -45,7 +40,7 @@ int get_id(char *buf, int size) {
             if (cnt == 0) // 아무 문자도 없을 때는 진행
                 continue;
             if (cnt > 0) {
-                move_cur(30, 5);
+                move_cur(30, 9);
                 cnt = cnt - 1;
                 buf[cnt] = '\0';
                 printf("%s", buf);
@@ -59,11 +54,11 @@ int get_id(char *buf, int size) {
         printf("%c", (char)key);
 
         if (cnt == size - 1) {
-            move_cur(9, 10);
+            move_cur(9, 15);
             printf("아이디의 최대 길이는 14자 입니다. 다시 입력해 주세요.");
-            move_cur(30, 5);
+            move_cur(30, 9);
             printf("                  ");
-            move_cur(30, 5);
+            move_cur(30, 9);
             cnt = 0;
             continue;
         } // 처음으로 돌아가 다시 입력받음
@@ -84,7 +79,7 @@ int get_pw(char *buf, int size) {
             if (cnt == 0) // 아무 문자도 없을 때는 진행
                 continue;
             if (cnt > 0) {
-                move_cur(30, 8);
+                move_cur(30, 13);
                 cnt = cnt - 1;
                 buf[cnt] = '\0';
                 for (int j = 0; j < cnt; j++)
@@ -98,11 +93,11 @@ int get_pw(char *buf, int size) {
         printf("*");            // 화면에 별 표시
 
         if (cnt == size - 1) {
-            move_cur(9, 10);
+            move_cur(9, 15);
             printf("비밀번호의 최대 길이는 14자 입니다. 다시 입력해 주세요.");
-            move_cur(30, 8);
+            move_cur(30, 13);
             printf("                  ");
-            move_cur(30, 8);
+            move_cur(30, 13);
             cnt = 0;
             continue;
         } // 처음으로 돌아가 다시 입력받음
